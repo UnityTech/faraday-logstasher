@@ -1,12 +1,12 @@
 require 'test_helper'
 require 'active_support/log_subscriber/test_helper'
 
-class LogSubscriberTest < ActiveSupport::TestCase
+class LogstasherTest < ActiveSupport::TestCase
    include ActiveSupport::LogSubscriber::TestHelper
 
    def setup
      super
-     Faraday::LogSubscriber.attach_to(:faraday)
+     LogStasher::Faraday::LogSubscriber.attach_to(:faraday)
    end
 
    def test_faraday_requests_are_logged

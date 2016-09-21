@@ -10,7 +10,9 @@ require 'action_controller/log_subscriber'
 require 'faraday'
 require 'faraday_middleware'
 
-require 'faraday-log-subscriber'
+require 'logstasher'
+
+require 'faraday-logstasher'
 require 'minitest/autorun'
 
 ActiveSupport.test_order = :random

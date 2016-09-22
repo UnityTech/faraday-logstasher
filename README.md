@@ -1,6 +1,7 @@
 # Faraday Logstasher
 
 A `ActiveSupport::LogSubscriber` to log HTTP requests made by a [Faraday](https://github.com/lostisland/faraday) client instance, into [Logstasher](https://github.com/shadabahmed/logstasher).
+
 Forked from [faraday-log-subscriber](https://github.com/plataformatec/faraday-log-subscriber).
 
 ## Installation

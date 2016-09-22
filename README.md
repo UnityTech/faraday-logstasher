@@ -1,13 +1,13 @@
-# Faraday Log Subscriber
+# Faraday Logstasher
 
-A `ActiveSupport::LogSubscriber` to log HTTP requests made by a [Faraday](https://github.com/lostisland/faraday) client instance.
+A `ActiveSupport::LogSubscriber` to log HTTP requests made by a [Faraday](https://github.com/lostisland/faraday) client instance, into [Logstasher](https://github.com/shadabahmed/logstasher).
 
 ## Installation
 
 Add it to your Gemfile:
 
 ```ruby
-gem 'faraday-log-subscriber'
+gem 'faraday-logstasher'
 ```
 
 ## Usage
@@ -46,4 +46,6 @@ client.get('repos/rails/rails')
 
 ## License
 
-Copyright (c) 2015 Plataformatec. See LICENSE file.
+Copyright (c) 2015 Plataformatec.
+Copyright (c) 2016 Unity Technologies ApS.
+See LICENSE file.

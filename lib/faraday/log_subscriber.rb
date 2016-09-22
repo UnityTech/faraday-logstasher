@@ -24,12 +24,22 @@ module LogStasher
       end
 
       def http_cache(event)
-        data = event.payload
+        env = event.payload
+
+        url = env[:env][:url]
+
+        data = {
+          name: 'http_cache.faraday',
+          host: url.host,
+          request_uri: url.request_uri,
+          cache_status: env[:cache_status]
+        }
 
         data.merge! request_context
         data.merge! LogStasher.store
 
         tags = []
+
         logger << LogStasher.build_logstash_event(data, tags).to_json + "\n"
       end
 

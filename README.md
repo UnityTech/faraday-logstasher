@@ -24,7 +24,7 @@ client = Faraday.new('https://api.github.com') do |builder|
 end
 
 client.get('repos/rails/rails')
-# 'Faraday GET [200] (1026.9ms) https://api.github.com/repos/rails/rails'
+# {"name":"request.faraday","host":"api.github.com","method":"GET","request_uri":"/repos/rails/rails","status":200,"duration":551.33,"source":"unknown","tags":[],"@timestamp":"2016-09-22T14:24:08.047Z","@version":"1"}
 ```
 
 ### `faraday-http-cache` integration
@@ -42,8 +42,9 @@ end
 
 client.get('repos/rails/rails')
 client.get('repos/rails/rails')
-# Faraday HTTP Cache [fresh] https://api.github.com/repos/rails/rails
-# Faraday GET [200] (1.7ms) https://api.github.com/repos/rails/rails
+# {"name":"http_cache.faraday","host":"api.github.com","request_uri":"/repos/rails/rails","cache_status":"fresh","source":"unknown","tags":[],"@timestamp":"2016-09-22T14:25:41.141Z","@version":"1"}
+# {"name":"request.faraday","host":"api.github.com","method":"GET","request_uri":"/repos/rails/rails","status":200,"duration":1.98,"source":"unknown","tags":[],"@timestamp":"2016-09-22T14:25:41.142Z","@version":"1"}
+
 ```
 
 ## License

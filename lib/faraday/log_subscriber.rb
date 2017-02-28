@@ -1,57 +1,84 @@
-module Faraday
-  class LogSubscriber < ActiveSupport::LogSubscriber
-    HTTP_METHOD_COLORS = Hash.new(MAGENTA)
+require 'active_support/notifications'
+require 'logstasher/custom_fields'
 
-    HTTP_METHOD_COLORS['POST'.freeze] = GREEN
-    HTTP_METHOD_COLORS['GET'.freeze] = BLUE
-    HTTP_METHOD_COLORS['PUT'.freeze] = YELLOW
-    HTTP_METHOD_COLORS['DELETE'.freeze] = RED
+module LogStasher
+  module Faraday
+    class LogSubscriber < ActiveSupport::LogSubscriber
+      include CustomFields::LogSubscriber
 
-    def self.runtime=(value)
-      Thread.current['faraday_runtime'] = value
-    end
+      def logger
+        LogStasher.logger
+      end
 
-    def self.runtime
-      Thread.current['faraday_runtime'] ||= 0
-    end
+      def self.runtime=(value)
+        Thread.current['faraday_runtime'] = value
+      end
 
-    def self.reset_runtime
-      rt, self.runtime = runtime, 0
-      rt
-    end
+      def self.runtime
+        Thread.current['faraday_runtime'] ||= 0
+      end
 
-    def http_cache(event)
-      payload = event.payload
+      def self.reset_runtime
+        rt, self.runtime = runtime, 0
+        rt
+      end
 
-      status = payload[:cache_status]
-      name = "Faraday HTTP Cache [#{status}]"
-      request = payload[:env][:url]
+      def http_cache(event)
+        env = event.payload
 
-      name = color(name, MAGENTA, true)
-      request = color(request, nil, false)
+        url = env[:env][:url]
 
-      info "  #{name} #{request}"
-    end
+        data = {
+          name: 'http_cache.faraday',
+          host: url.host,
+          request_uri: url.request_uri,
+          cache_status: env[:cache_status]
+        }
 
-    def request(event)
-      self.class.runtime += event.duration
+        data.merge! request_context
+        data.merge! LogStasher.store
 
-      env = event.payload
-      method = env[:method].to_s.upcase
-      status = env[:status]
-      name = format('%s %s [%s] (%.1fms)', 'Faraday', method, status, event.duration)
-      body = env.body
-      request = env[:url]
+        tags = []
 
-      name = color(name, nil, true)
-      request = color(request, HTTP_METHOD_COLORS[method], true)
+        logger << LogStasher.build_logstash_event(data, tags).to_json + "\n"
+      end
 
-      info "  #{name} #{request}"
-      if !env.success? && body.present?
-        info "  #{name} #{body}"
+      def request(event)
+        self.class.runtime += event.duration
+        env = event.payload
+
+        url = env[:url]
+        http_method = env[:method].to_s.upcase
+
+        data = {
+          name: 'request.faraday',
+          host: url.host,
+          method: http_method,
+          request_uri: url.request_uri,
+          status: env.status,
+          duration: event.duration.round(2)
+        }
+
+        data.merge! request_context
+        data.merge! LogStasher.store
+
+        tags = []
+        tags.push('unsuccessful') unless env.success?
+
+        logger << LogStasher.build_logstash_event(data, tags).to_json + "\n"
+      end
+
+      attach_to :faraday
+
+      private
+
+      def request_context
+        LogStasher.request_context
+      end
+
+      def store
+        LogStasher.store
       end
     end
-
-    attach_to :faraday
   end
 end

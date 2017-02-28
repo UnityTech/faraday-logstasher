@@ -15,19 +15,19 @@ class ControllerRuntimeTest < ActionController::TestCase
     end
 
     def show
-      Faraday::LogSubscriber.runtime += 100
+      LogStasher::Faraday::LogSubscriber.runtime += 100
       render inline: 'Takes 100ms'
     end
 
     def redirect
-      Faraday::LogSubscriber.runtime += 100
+      LogStasher::Faraday::LogSubscriber.runtime += 100
       redirect_to 'http://example.com'
     end
 
     def faraday_after_render
-      Faraday::LogSubscriber.runtime += 100
+      LogStasher::Faraday::LogSubscriber.runtime += 100
       render inline: 'Hello world'
-      Faraday::LogSubscriber.runtime += 100
+      LogStasher::Faraday::LogSubscriber.runtime += 100
     end
   end
 
@@ -44,7 +44,7 @@ class ControllerRuntimeTest < ActionController::TestCase
     super
 
     ActiveSupport::LogSubscriber.log_subscribers.clear
-    Faraday::LogSubscriber.reset_runtime
+    LogStasher::Faraday::LogSubscriber.reset_runtime
   end
 
   def set_logger(logger)
@@ -52,7 +52,7 @@ class ControllerRuntimeTest < ActionController::TestCase
   end
 
   def test_runtime_reset_before_requests
-    Faraday::LogSubscriber.runtime += 12345
+    LogStasher::Faraday::LogSubscriber.runtime += 12345
     get :zero
     wait
 

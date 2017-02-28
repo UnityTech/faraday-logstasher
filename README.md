@@ -1,13 +1,15 @@
-# Faraday Log Subscriber
+# Faraday Logstasher
 
-A `ActiveSupport::LogSubscriber` to log HTTP requests made by a [Faraday](https://github.com/lostisland/faraday) client instance.
+A `ActiveSupport::LogSubscriber` to log HTTP requests made by a [Faraday](https://github.com/lostisland/faraday) client instance, into [Logstasher](https://github.com/shadabahmed/logstasher).
+
+Forked from [faraday-log-subscriber](https://github.com/plataformatec/faraday-log-subscriber).
 
 ## Installation
 
 Add it to your Gemfile:
 
 ```ruby
-gem 'faraday-log-subscriber'
+gem 'faraday-logstasher'
 ```
 
 ## Usage
@@ -22,7 +24,7 @@ client = Faraday.new('https://api.github.com') do |builder|
 end
 
 client.get('repos/rails/rails')
-# 'Faraday GET [200] (1026.9ms) https://api.github.com/repos/rails/rails'
+# {"name":"request.faraday","host":"api.github.com","method":"GET","request_uri":"/repos/rails/rails","status":200,"duration":551.33,"source":"unknown","tags":[],"@timestamp":"2016-09-22T14:24:08.047Z","@version":"1"}
 ```
 
 ### `faraday-http-cache` integration
@@ -40,10 +42,13 @@ end
 
 client.get('repos/rails/rails')
 client.get('repos/rails/rails')
-# Faraday HTTP Cache [fresh] https://api.github.com/repos/rails/rails
-# Faraday GET [200] (1.7ms) https://api.github.com/repos/rails/rails
+# {"name":"http_cache.faraday","host":"api.github.com","request_uri":"/repos/rails/rails","cache_status":"fresh","source":"unknown","tags":[],"@timestamp":"2016-09-22T14:25:41.141Z","@version":"1"}
+# {"name":"request.faraday","host":"api.github.com","method":"GET","request_uri":"/repos/rails/rails","status":200,"duration":1.98,"source":"unknown","tags":[],"@timestamp":"2016-09-22T14:25:41.142Z","@version":"1"}
+
 ```
 
 ## License
 
-Copyright (c) 2015 Plataformatec. See LICENSE file.
+Copyright (c) 2015 Plataformatec.
+Copyright (c) 2016 Unity Technologies ApS.
+See LICENSE file.
